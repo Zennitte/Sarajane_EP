@@ -1369,29 +1369,39 @@ INSERT INTO public.programa_de_fidelidade VALUES (20, 'Upgrade de quarto', 95, 8
 -- Data for Name: r_inclui_a; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.r_inclui_a VALUES (1, 1);
-INSERT INTO public.r_inclui_a VALUES (2, 2);
-INSERT INTO public.r_inclui_a VALUES (3, 3);
-INSERT INTO public.r_inclui_a VALUES (4, 4);
-INSERT INTO public.r_inclui_a VALUES (5, 5);
-INSERT INTO public.r_inclui_a VALUES (6, 6);
-INSERT INTO public.r_inclui_a VALUES (7, 7);
-INSERT INTO public.r_inclui_a VALUES (8, 8);
-INSERT INTO public.r_inclui_a VALUES (9, 9);
-INSERT INTO public.r_inclui_a VALUES (10, 10);
-INSERT INTO public.r_inclui_a VALUES (11, 11);
-INSERT INTO public.r_inclui_a VALUES (12, 12);
-INSERT INTO public.r_inclui_a VALUES (13, 13);
-INSERT INTO public.r_inclui_a VALUES (14, 14);
-INSERT INTO public.r_inclui_a VALUES (15, 15);
-INSERT INTO public.r_inclui_a VALUES (16, 16);
-INSERT INTO public.r_inclui_a VALUES (17, 15);
-INSERT INTO public.r_inclui_a VALUES (18, 18);
-INSERT INTO public.r_inclui_a VALUES (19, 19);
-INSERT INTO public.r_inclui_a VALUES (20, 20);
-INSERT INTO public.r_inclui_a VALUES (1, 20);
-INSERT INTO public.r_inclui_a VALUES (20, 18);
-INSERT INTO public.r_inclui_a VALUES (15, 12);
+-- Deletando algumas tuplas que, sem querer, acabaram com informações contraditórias
+-- (estavam com status 'Livre', mas possuiam reservas ativas)
+INSERT INTO Hotel.r_inclui_a VALUES (1, 1);
+INSERT INTO Hotel.r_inclui_a VALUES (2, 2);
+--INSERT INTO Hotel.r_inclui_a VALUES (3, 3);
+delete from hotel.r_inclui_a where codigo_quarto=3;
+INSERT INTO Hotel.r_inclui_a VALUES (4, 4);
+--INSERT INTO Hotel.r_inclui_a VALUES (5, 5);
+delete from hotel.r_inclui_a where codigo_quarto=5;
+INSERT INTO Hotel.r_inclui_a VALUES (6, 6);
+--INSERT INTO Hotel.r_inclui_a VALUES (7, 7);
+delete from hotel.r_inclui_a where codigo_quarto=7;
+INSERT INTO Hotel.r_inclui_a VALUES (8, 8);
+INSERT INTO Hotel.r_inclui_a VALUES (9, 9);
+INSERT INTO Hotel.r_inclui_a VALUES (10, 10);
+--INSERT INTO Hotel.r_inclui_a VALUES (11, 11);
+delete from hotel.r_inclui_a where codigo_quarto=11;
+INSERT INTO Hotel.r_inclui_a VALUES (12, 12);
+--INSERT INTO Hotel.r_inclui_a VALUES (13, 13);
+delete from hotel.r_inclui_a where codigo_quarto=13;
+INSERT INTO Hotel.r_inclui_a VALUES (14, 14);
+--INSERT INTO Hotel.r_inclui_a VALUES (15, 15);
+delete from hotel.r_inclui_a where codigo_quarto=15;
+INSERT INTO Hotel.r_inclui_a VALUES (16, 16);
+--INSERT INTO Hotel.r_inclui_a VALUES (17, 15);
+delete from hotel.r_inclui_a where codigo_quarto=17;
+INSERT INTO Hotel.r_inclui_a VALUES (18, 18);
+--INSERT INTO Hotel.r_inclui_a VALUES (19, 19);
+delete from hotel.r_inclui_a where codigo_quarto=19;
+INSERT INTO Hotel.r_inclui_a VALUES (20, 20);
+INSERT INTO Hotel.r_inclui_a VALUES (1, 20);
+INSERT INTO Hotel.r_inclui_a VALUES (20, 18);
+INSERT INTO Hotel.r_inclui_a VALUES (15, 12);
 
 
 --
