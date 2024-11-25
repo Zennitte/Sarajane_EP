@@ -46,13 +46,19 @@ HAVING re.avaliacao > (
 
 /* 4 relações */
 
-SELECT pa.cpf as CPF, pa.idade as Idade, dp.nome as Ambulatorio, hosp.nome as Hospital
-FROM paciente as pa
-JOIN atendimento as atend ON atend.cpf = pa.cpf
-JOIN ambulatorio as amb ON pa.idamb = amb.idamb 
-JOIN dependencias as dp ON dp.iddep = amb.iddep
-JOIN hospital as hosp ON amb.idhospital = hosp.idhospital
+SELECT 
+     pa.cpf AS CPF, 
+     pa.idade AS Idade, 
+     pa.tipo AS relacao_com_hotel,
+     dp.iddep AS Ambulatorio, 
+     hosp.nome AS Hospital
+FROM paciente AS pa
+JOIN atendimento AS atend ON atend.cpf = pa.cpf
+JOIN ambulatorio AS amb ON pa.idamb = amb.idamb 
+JOIN hotel.dependencias as dp ON dp.iddep = amb.iddep
+JOIN hospital AS hosp ON amb.idhospital = hosp.idhospital
 WHERE atend.gravidade = 'Alta';
+
 
 /* Relação recursiva */
 
