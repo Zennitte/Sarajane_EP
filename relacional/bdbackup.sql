@@ -1401,7 +1401,6 @@ delete from hotel.r_inclui_a where codigo_quarto=19;
 INSERT INTO Hotel.r_inclui_a VALUES (20, 20);
 INSERT INTO Hotel.r_inclui_a VALUES (1, 20);
 INSERT INTO Hotel.r_inclui_a VALUES (20, 18);
-INSERT INTO Hotel.r_inclui_a VALUES (15, 12);
 
 
 --
