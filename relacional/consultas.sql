@@ -6,7 +6,7 @@ JOIN reserva as rs on r.cpf = rs.cpf
 JOIN r_inclui_a as ra ON rs.codigo = ra.codigo
 JOIN acomodacao as ac ON ra.codigo_quarto = ac.codigo_quarto
 JOIN hospede as h ON r.cpf = h.cpf
-WHERE r.ordem LIKE '%ar-condicionado%';
+WHERE r.ordem ILIKE '%ar-condicionado%';
 
 /* Consulta com IN */
 
