@@ -16,8 +16,6 @@ JOIN r_inclui_a ra ON ra.codigo = rs.codigo
 JOIN acomodacao ac ON ac.codigo_quarto = ra.codigo_quarto
 WHERE ac.tipo IN ('Cobertura', 'Deluxe', 'Suíte de luxo')
 
-/* Consulta com LEFT JOIN */
-
 SELECT 
     acom.Codigo_Quarto AS Codigo,
     acom.Tipo AS Tipo,
@@ -88,3 +86,4 @@ AND EXISTS (
         AND f1.CPF != f2.CPF -- Funcionários diferentes
         AND b2.Tipo = 'Vale Alimentação'
 );
+
