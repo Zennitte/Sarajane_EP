@@ -30,7 +30,6 @@ SET row_security = off;
 
 -- \connect "Hotel"
 
--- Em um database de sua preferência já criado, crie o schema a seguir:
 CREATE SCHEMA Hotel;
 
 -- SET statement_timeout = 0;
