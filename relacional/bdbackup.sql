@@ -5,7 +5,7 @@
 -- Dumped from database version 17.2
 -- Dumped by pg_dump version 17.2
 
--- Started on 2024-11-24 21:01:16
+-- Started on 2024-11-26 18:11:19
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -21,10 +21,11 @@ SET row_security = off;
 
 --
 -- TOC entry 5163 (class 1262 OID 18234)
--- Name: public; Type: DATABASE; Schema: -; Owner: postgres
+-- Name: Hotel; Type: DATABASE; Schema: -; Owner: postgres
 --
 
 CREATE DATABASE "Hotel" WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'Portuguese_Brazil.1252';
+
 
 ALTER DATABASE "Hotel" OWNER TO postgres;
 
@@ -42,9 +43,9 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
--- SET default_tablespace = '';
+SET default_tablespace = '';
 
--- SET default_table_access_method = heap;
+SET default_table_access_method = heap;
 
 --
 -- TOC entry 217 (class 1259 OID 18235)
@@ -330,7 +331,7 @@ ALTER TABLE public.hospital OWNER TO postgres;
 
 --
 -- TOC entry 235 (class 1259 OID 18290)
--- Name: public; Type: TABLE; Schema: public; Owner: postgres
+-- Name: hotel; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.hotel (
@@ -1153,7 +1154,7 @@ INSERT INTO public.hospital VALUES (5, '56789012000150', 'Hospital Senior ', 250
 --
 -- TOC entry 5136 (class 0 OID 18290)
 -- Dependencies: 235
--- Data for Name: public; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: hotel; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 INSERT INTO public.hotel VALUES (1, 'Unidade Paulista', 4);
@@ -1264,7 +1265,7 @@ INSERT INTO public.movimentacao VALUES (23, 8000, 'Manutenção de equipamentos'
 INSERT INTO public.movimentacao VALUES (24, 12000, 'Reparos na infraestrutura (pintura e encanamento)', '2024-11-19', 'PIX', 1, NULL);
 INSERT INTO public.movimentacao VALUES (25, 18000, 'Pagamento de funcionários (folha de pagamento)', '2024-11-18', 'Transferência Bancária', 1, NULL);
 INSERT INTO public.movimentacao VALUES (26, 5000, 'Compra de uniformes para funcionários', '2024-11-17', 'Boleto', 1, NULL);
-INSERT INTO public.movimentacao VALUES (27, 10000, 'Gastos com Hotelidade e marketing', '2024-11-15', 'Cartão de Crédito', 1, NULL);
+INSERT INTO public.movimentacao VALUES (27, 10000, 'Gastos com publicidade e marketing', '2024-11-15', 'Cartão de Crédito', 1, NULL);
 INSERT INTO public.movimentacao VALUES (28, 7000, 'Assinatura de softwares de gestão', '2024-11-14', 'PIX', 1, NULL);
 INSERT INTO public.movimentacao VALUES (29, 3000, 'Compra de itens de papelaria e escritório', '2024-11-13', 'Boleto', 1, NULL);
 INSERT INTO public.movimentacao VALUES (30, 25000, 'Pagamento de contas de energia e água', '2024-11-12', 'Transferência Bancária', 1, NULL);
@@ -1369,38 +1370,20 @@ INSERT INTO public.programa_de_fidelidade VALUES (20, 'Upgrade de quarto', 95, 8
 -- Data for Name: r_inclui_a; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
--- Deletando algumas tuplas que, sem querer, acabaram com informações contraditórias
--- (estavam com status 'Livre', mas possuiam reservas ativas)
-INSERT INTO Hotel.r_inclui_a VALUES (1, 1);
-INSERT INTO Hotel.r_inclui_a VALUES (2, 2);
---INSERT INTO Hotel.r_inclui_a VALUES (3, 3);
-delete from hotel.r_inclui_a where codigo_quarto=3;
-INSERT INTO Hotel.r_inclui_a VALUES (4, 4);
---INSERT INTO Hotel.r_inclui_a VALUES (5, 5);
-delete from hotel.r_inclui_a where codigo_quarto=5;
-INSERT INTO Hotel.r_inclui_a VALUES (6, 6);
---INSERT INTO Hotel.r_inclui_a VALUES (7, 7);
-delete from hotel.r_inclui_a where codigo_quarto=7;
-INSERT INTO Hotel.r_inclui_a VALUES (8, 8);
-INSERT INTO Hotel.r_inclui_a VALUES (9, 9);
-INSERT INTO Hotel.r_inclui_a VALUES (10, 10);
---INSERT INTO Hotel.r_inclui_a VALUES (11, 11);
-delete from hotel.r_inclui_a where codigo_quarto=11;
-INSERT INTO Hotel.r_inclui_a VALUES (12, 12);
---INSERT INTO Hotel.r_inclui_a VALUES (13, 13);
-delete from hotel.r_inclui_a where codigo_quarto=13;
-INSERT INTO Hotel.r_inclui_a VALUES (14, 14);
---INSERT INTO Hotel.r_inclui_a VALUES (15, 15);
-delete from hotel.r_inclui_a where codigo_quarto=15;
-INSERT INTO Hotel.r_inclui_a VALUES (16, 16);
---INSERT INTO Hotel.r_inclui_a VALUES (17, 15);
-delete from hotel.r_inclui_a where codigo_quarto=17;
-INSERT INTO Hotel.r_inclui_a VALUES (18, 18);
---INSERT INTO Hotel.r_inclui_a VALUES (19, 19);
-delete from hotel.r_inclui_a where codigo_quarto=19;
-INSERT INTO Hotel.r_inclui_a VALUES (20, 20);
-INSERT INTO Hotel.r_inclui_a VALUES (1, 20);
-INSERT INTO Hotel.r_inclui_a VALUES (20, 18);
+INSERT INTO public.r_inclui_a VALUES (1, 1);
+INSERT INTO public.r_inclui_a VALUES (2, 2);
+INSERT INTO public.r_inclui_a VALUES (4, 4);
+INSERT INTO public.r_inclui_a VALUES (6, 6);
+INSERT INTO public.r_inclui_a VALUES (8, 8);
+INSERT INTO public.r_inclui_a VALUES (9, 9);
+INSERT INTO public.r_inclui_a VALUES (10, 10);
+INSERT INTO public.r_inclui_a VALUES (12, 12);
+INSERT INTO public.r_inclui_a VALUES (14, 14);
+INSERT INTO public.r_inclui_a VALUES (16, 16);
+INSERT INTO public.r_inclui_a VALUES (18, 18);
+INSERT INTO public.r_inclui_a VALUES (20, 20);
+INSERT INTO public.r_inclui_a VALUES (1, 20);
+INSERT INTO public.r_inclui_a VALUES (20, 18);
 
 
 --
@@ -2656,8 +2639,9 @@ ALTER TABLE ONLY public.robo_de_delivey
     ADD CONSTRAINT robo_de_delivey_codigo_reserva_fkey FOREIGN KEY (codigo_reserva) REFERENCES public.reserva(codigo);
 
 
--- Completed on 2024-11-24 21:01:16
+-- Completed on 2024-11-26 18:11:19
 
 --
 -- PostgreSQL database dump complete
 --
+

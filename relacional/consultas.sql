@@ -55,7 +55,7 @@ SELECT
 FROM paciente AS pa
 JOIN atendimento AS atend ON atend.cpf = pa.cpf
 JOIN ambulatorio AS amb ON pa.idamb = amb.idamb 
-JOIN hotel.dependencias as dp ON dp.iddep = amb.iddep
+JOIN dependencias as dp ON dp.iddep = amb.iddep
 JOIN hospital AS hosp ON amb.idhospital = hosp.idhospital
 WHERE atend.gravidade = 'Alta';
 
