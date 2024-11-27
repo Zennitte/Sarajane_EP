@@ -1,0 +1,462 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model a_oferece_item {
+  codigo_quarto Int
+  coditem       Int
+  quantidade    Int
+  valor         Float      @db.Real
+  acomodacao    acomodacao @relation(fields: [codigo_quarto], references: [codigo_quarto], onDelete: NoAction, onUpdate: NoAction, map: "fka_o_aco_fk")
+  item          item       @relation(fields: [coditem], references: [coditem], onDelete: NoAction, onUpdate: NoAction, map: "fka_o_ite")
+
+  @@id([coditem, codigo_quarto], map: "id_a_oferece_item")
+  @@index([codigo_quarto], map: "fka_o_aco_ind")
+}
+
+model academia {
+  iddep        Int          @id(map: "fkdep_aca_id")
+  idacad       Int          @unique(map: "sid_academia")
+  nmraparelhos Int
+  dependencias dependencias @relation(fields: [iddep], references: [iddep], onDelete: NoAction, onUpdate: NoAction, map: "fkdep_aca_fk")
+  area         area[]
+}
+
+model acomodacao {
+  codigo_quarto  Int              @id(map: "id_acomodacao")
+  iddep          Int              @unique(map: "fkdep_aco_id")
+  status         String           @db.VarChar(20)
+  tipo           String           @db.VarChar(50)
+  valor          Float?           @db.Real
+  a_oferece_item a_oferece_item[]
+  dependencias   dependencias     @relation(fields: [iddep], references: [iddep], onDelete: NoAction, onUpdate: NoAction, map: "fkdep_aco_fk")
+  r_inclui_a     r_inclui_a[]
+}
+
+model ambulatorio {
+  idamb            Int                @id(map: "id_ambulatorio_id")
+  iddep            Int                @unique(map: "fkdep_amb_id")
+  idhospital       Int?
+  hospital         hospital?          @relation(fields: [idhospital], references: [idhospital], onDelete: NoAction, onUpdate: NoAction, map: "fka_encaminha_para_h_fk")
+  dependencias     dependencias       @relation(fields: [iddep], references: [iddep], onDelete: NoAction, onUpdate: NoAction, map: "fkdep_amb_fk")
+  m_trabalhapara_a m_trabalhapara_a[]
+  paciente         paciente[]
+
+  @@index([idhospital], map: "fka_encaminha_para_h_ind")
+}
+
+model area {
+  tipo     String   @db.VarChar(50)
+  idarea   Int      @id(map: "id_area")
+  iddep    Int
+  academia academia @relation(fields: [iddep], references: [iddep], onDelete: NoAction, onUpdate: NoAction, map: "fkacad_possui_area")
+
+  @@unique([iddep, idarea], map: "sid_area")
+}
+
+model atendimento {
+  protocolo  Int          @id(map: "id_atendimento")
+  gravidade  String       @db.VarChar(30)
+  status     String       @db.VarChar(30)
+  data       DateTime     @db.Date
+  cpf        String       @db.Char(11)
+  m_r_cpf    String       @db.Char(11)
+  medico     medico       @relation(fields: [m_r_cpf], references: [cpf], onDelete: NoAction, onUpdate: NoAction, map: "fkm_realiza_atend_fk")
+  paciente   paciente     @relation(fields: [cpf], references: [cpf], onDelete: NoAction, onUpdate: NoAction, map: "fkp_gera_atend_fk")
+  pertence_a pertence_a[]
+
+  @@index([m_r_cpf], map: "fkm_realiza_atend_ind")
+  @@index([cpf], map: "fkp_gera_atend_ind")
+}
+
+model beneficio {
+  idbenef    Int          @id(map: "id_beneficio_id")
+  tipo       String       @db.VarChar(50)
+  desconto   Float?       @db.Real
+  valor      Float?       @db.Real
+  f_recebe_b f_recebe_b[]
+}
+
+model condominio {
+  codigocond    Int     @id(map: "id_condominio")
+  cnpj          String  @unique(map: "fku_possui_c_id") @db.Char(14)
+  valor_aluguel Float   @db.Real
+  servico       String  @db.VarChar(50)
+  unidade       unidade @relation(fields: [cnpj], references: [cnpj], onDelete: NoAction, onUpdate: NoAction, map: "fku_possui_c_fk")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model dependencias {
+  iddep             Int                @id(map: "id_dependencias")
+  nome              String             @db.VarChar(50)
+  status_de_limpeza String             @db.VarChar(50)
+  capacidade        Int
+  cnpj              String             @db.Char(14)
+  restaurante       Int?
+  piscina           Int?
+  espaco_de_eventos Int?
+  ambulatorio       Int?
+  acomodacao        Int?
+  academia          Int?
+  hora_fechamento   DateTime           @db.Time(6)
+  hora_inicio       DateTime           @db.Time(6)
+  academia_obj          academia?
+  acomodacao_obj        acomodacao?
+  ambulatorio_obj       ambulatorio?
+  unidade           unidade            @relation(fields: [cnpj], references: [cnpj], onDelete: NoAction, onUpdate: NoAction, map: "fku_possui_d_fk")
+  espaco_de_eventos_obj espaco_de_eventos?
+  piscina_obj           piscina?
+  restaurante_obj       restaurante?
+
+  @@index([cnpj], map: "fku_possui_d_ind")
+}
+
+model entrada {
+  idmov          Int           @id(map: "fkmov_ent_id")
+  identrada      Int           @unique(map: "sid_entrada")
+  desconto       Float         @db.Real
+  codigo_reserva Int?
+  reserva        reserva?      @relation(fields: [codigo_reserva], references: [codigo], onDelete: NoAction, onUpdate: NoAction)
+  movimentacao   movimentacao  @relation(fields: [idmov], references: [idmov], onDelete: NoAction, onUpdate: NoAction, map: "fkmov_ent_fk")
+  nota_fiscal    nota_fiscal[]
+}
+
+model espaco_de_eventos {
+  iddep        Int          @id(map: "fkdep_esp_id")
+  idesp        Int          @unique(map: "sid_espaco_de_eventos")
+  tipo_de_uso  String       @db.VarChar(50)
+  area         Int
+  dependencias dependencias @relation(fields: [iddep], references: [iddep], onDelete: NoAction, onUpdate: NoAction, map: "fkdep_esp_fk")
+}
+
+model estacionamento {
+  codigoest                       Int     @id(map: "id_estacionamento_id")
+  cnpj                            String  @unique(map: "fku_possui_e_id") @db.Char(14)
+  nome                            String  @db.VarChar(50)
+  quantidade_de_vagas_descobertas Int
+  quantidade_de_vagas_cobertas    Int?
+  unidade                         unidade @relation(fields: [cnpj], references: [cnpj], onDelete: NoAction, onUpdate: NoAction, map: "fku_possui_e_fk")
+  vaga                            vaga[]
+}
+
+model estoque {
+  codestoque    Int             @id(map: "id_estoque")
+  nome          String          @db.VarChar(50)
+  quantidade    Int
+  cnpj          String?         @db.VarChar(13)
+  unidade       unidade?        @relation(fields: [cnpj], references: [cnpj], onDelete: NoAction, onUpdate: NoAction)
+  item_sai_do_e item_sai_do_e[]
+}
+
+model f_recebe_b {
+  idbenef     Int
+  cpf         String      @db.Char(11)
+  beneficio   beneficio   @relation(fields: [idbenef], references: [idbenef], onDelete: NoAction, onUpdate: NoAction, map: "fkf_r_ben")
+  funcionario funcionario @relation(fields: [cpf], references: [cpf], onDelete: NoAction, onUpdate: NoAction, map: "fkf_r_fun_fk")
+
+  @@id([idbenef, cpf], map: "id_f_recebe_b")
+  @@index([cpf], map: "fkf_r_fun_ind")
+}
+
+model funcionario {
+  cpf           String       @id(map: "id_funcionario") @db.Char(11)
+  salario       Float        @db.Real
+  primeiro_nome String       @db.VarChar(50)
+  sobrenome     String       @db.VarChar(100)
+  contrato      String       @db.VarChar(50)
+  cargo         String       @db.VarChar(50)
+  cnpj          String?      @db.Char(14)
+  f_recebe_b    f_recebe_b[]
+  unidade       unidade?     @relation(fields: [cnpj], references: [cnpj], onDelete: NoAction, onUpdate: NoAction, map: "fkf_trabalhapara_u_fk")
+  requisicao    requisicao[]
+
+  @@index([cnpj], map: "fkf_trabalhapara_u_ind")
+}
+
+model h_consome_item {
+  cpf        String  @db.Char(11)
+  coditem    Int
+  quantidade Int
+  hospede    hospede @relation(fields: [cpf], references: [cpf], onDelete: NoAction, onUpdate: NoAction, map: "fkh_c_hos_fk")
+  item       item    @relation(fields: [coditem], references: [coditem], onDelete: NoAction, onUpdate: NoAction, map: "fkh_c_ite")
+
+  @@id([coditem, cpf], map: "id_h_consome_item")
+  @@index([cpf], map: "fkh_c_hos_ind")
+}
+
+model hospede {
+  cpf              String           @id(map: "id_hospede_id") @db.Char(11)
+  nom_primeironome String           @db.VarChar(50)
+  nom_sobrenome    String           @db.VarChar(50)
+  telefone         String           @db.VarChar(11)
+  email            String           @db.VarChar(50)
+  h_consome_item   h_consome_item[]
+  requisicao       requisicao[]
+  reserva          reserva[]
+}
+
+model hospital {
+  idhospital        Int           @id(map: "id_hospital")
+  cnpj              String        @db.Char(14)
+  nome              String        @db.VarChar(100)
+  quantidade_leitos Int
+  ambulatorio       ambulatorio[]
+}
+
+model hotel {
+  codigo                 Int                      @id(map: "id_hotel_id")
+  nome                   String                   @db.VarChar(100)
+  avaliacao              Int
+  programa_de_fidelidade programa_de_fidelidade[]
+  unidade                unidade[]
+}
+
+model item {
+  coditem        Int              @id(map: "id_item_id")
+  produto        String           @db.VarChar(50)
+  tipo           String           @db.VarChar(50)
+  a_oferece_item a_oferece_item[]
+  h_consome_item h_consome_item[]
+  item_sai_do_e  item_sai_do_e[]
+}
+
+model item_sai_do_e {
+  codestoque Int
+  coditem    Int
+  estoque    estoque @relation(fields: [codestoque], references: [codestoque], onDelete: NoAction, onUpdate: NoAction, map: "fkite_est")
+  item       item    @relation(fields: [coditem], references: [coditem], onDelete: NoAction, onUpdate: NoAction, map: "fkite_ite_fk")
+
+  @@id([codestoque, coditem], map: "id_item_sai_do_e")
+  @@index([coditem], map: "fkite_ite_ind")
+}
+
+model m_trabalhapara_a {
+  idamb       Int
+  cpf         String      @db.Char(11)
+  ambulatorio ambulatorio @relation(fields: [idamb], references: [idamb], onDelete: NoAction, onUpdate: NoAction, map: "fkm_t_amb")
+  medico      medico      @relation(fields: [cpf], references: [cpf], onDelete: NoAction, onUpdate: NoAction, map: "fkm_t_med_fk")
+
+  @@id([idamb, cpf], map: "id_m_trabalhapara_a")
+  @@index([cpf], map: "fkm_t_med_ind")
+}
+
+model medicamento {
+  idmedic       Int          @id(map: "id_medicamento")
+  data_validade DateTime     @db.Date
+  nome_generico String       @db.VarChar(50)
+  forma         String       @db.VarChar(50)
+  concentracao  Float        @db.Real
+  pertence_a    pertence_a[]
+}
+
+model medico {
+  cpf              String             @id(map: "id_medico_id") @db.Char(11)
+  crm              String             @db.VarChar(30)
+  nom_nome         String             @db.VarChar(50)
+  nom_sobrenome    String             @db.VarChar(100)
+  atendimento      atendimento[]
+  m_trabalhapara_a m_trabalhapara_a[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model movimentacao {
+  idmov           Int           @id(map: "id_movimentacao_id")
+  valor           Float         @db.Real
+  descricao       String        @db.VarChar(500)
+  data            DateTime      @db.Date
+  forma_pagamento String        @db.VarChar(50)
+  saida           Int?
+  entrada         Int?
+  entrada_obj         entrada?
+  saida_obj           saida?
+  u_realiza_m     u_realiza_m[]
+}
+
+model nota_fiscal {
+  idnf         Int      @id(map: "id_nota_fiscal")
+  idmov        Int
+  xml          String   @db.VarChar(500)
+  numero       Int
+  data_emissao DateTime @db.Date
+  entrada      entrada  @relation(fields: [idmov], references: [idmov], onDelete: NoAction, onUpdate: NoAction, map: "fke_gera_nf")
+
+  @@unique([idmov, idnf], map: "sid_nota_fiscal")
+}
+
+model paciente {
+  cpf         String        @id(map: "id_paciente_id") @db.Char(11)
+  tipo        String        @db.VarChar(20)
+  idade       Int
+  peso        Float         @db.Real
+  problema    String        @db.VarChar(100)
+  idamb       Int
+  atendimento atendimento[]
+  ambulatorio ambulatorio   @relation(fields: [idamb], references: [idamb], onDelete: NoAction, onUpdate: NoAction, map: "fkp_ehlevadopara_a_fk")
+
+  @@index([idamb], map: "fkp_ehlevadopara_a_ind")
+}
+
+model pertence_a {
+  protocolo   Int
+  idmedic     Int
+  atendimento atendimento @relation(fields: [protocolo], references: [protocolo], onDelete: NoAction, onUpdate: NoAction, map: "fkper_ate")
+  medicamento medicamento @relation(fields: [idmedic], references: [idmedic], onDelete: NoAction, onUpdate: NoAction, map: "fkper_med_fk")
+
+  @@id([protocolo, idmedic], map: "id_pertence_a")
+  @@index([idmedic], map: "fkper_med_ind")
+}
+
+model piscina {
+  iddep        Int          @id(map: "fkdep_pis_id")
+  idpis        Int          @unique(map: "sid_piscina")
+  volume       Float        @db.Real
+  temperatura  Int
+  eh_coberta   String       @db.Char(1)
+  eh_aquecida  String       @db.Char(1)
+  dependencias dependencias @relation(fields: [iddep], references: [iddep], onDelete: NoAction, onUpdate: NoAction, map: "fkdep_pis_fk")
+}
+
+model programa_de_fidelidade {
+  idbonus        Int      @id(map: "id_programa_de_fidelidade_id")
+  tipobonus      String   @db.VarChar(50)
+  valor          Float    @db.Real
+  codigo         Int
+  codigo_reserva Int?
+  hotel          hotel    @relation(fields: [codigo], references: [codigo], onDelete: NoAction, onUpdate: NoAction, map: "fkbonifica_fk")
+  reserva        reserva? @relation(fields: [codigo_reserva], references: [codigo], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([codigo], map: "fkbonifica_ind")
+}
+
+model r_inclui_a {
+  codigo_quarto Int
+  codigo        Int
+  acomodacao    acomodacao @relation(fields: [codigo_quarto], references: [codigo_quarto], onDelete: NoAction, onUpdate: NoAction, map: "fkr_i_aco_fk")
+  reserva       reserva    @relation(fields: [codigo], references: [codigo], onDelete: NoAction, onUpdate: NoAction, map: "fkr_i_res")
+
+  @@id([codigo, codigo_quarto], map: "id_r_inclui_a")
+  @@index([codigo_quarto], map: "fkr_i_aco_ind")
+}
+
+model requisicao {
+  idreq          Int          @id(map: "id_requisicao")
+  cpf            String       @db.Char(11)
+  status         String       @db.VarChar(50)
+  dat_abertura   DateTime     @db.Timestamp(6)
+  dat_fechamento DateTime?    @db.Timestamp(6)
+  tipo           String       @db.VarChar(50)
+  ordem          String       @db.VarChar(500)
+  f_a_cpf        String?      @db.Char(11)
+  funcionario    funcionario? @relation(fields: [f_a_cpf], references: [cpf], onDelete: NoAction, onUpdate: NoAction, map: "fkf_atende_r_fk")
+  hospede        hospede      @relation(fields: [cpf], references: [cpf], onDelete: NoAction, onUpdate: NoAction, map: "fkh_abre_r")
+
+  @@unique([cpf, idreq], map: "sid_requisicao")
+  @@index([f_a_cpf], map: "fkf_atende_r_ind")
+}
+
+model reserva {
+  codigo                 Int                      @id(map: "id_reserva_id")
+  hos_check_in           DateTime                 @db.Timestamp(6)
+  hos_check_out          DateTime                 @db.Timestamp(6)
+  valor                  Float                    @db.Real
+  numero_pessoas         Int
+  cpf                    String                   @db.Char(11)
+  entrada                entrada[]
+  programa_de_fidelidade programa_de_fidelidade[]
+  r_inclui_a             r_inclui_a[]
+  hospede                hospede                  @relation(fields: [cpf], references: [cpf], onDelete: NoAction, onUpdate: NoAction, map: "fkh_faz_r_fk")
+  robo_de_delivey        robo_de_delivey[]
+  vaga                   vaga[]
+
+  @@index([cpf], map: "fkh_faz_r_ind")
+}
+
+model restaurante {
+  iddep        Int          @id(map: "fkdep_res_id")
+  idres        Int          @unique(map: "sid_restaurante")
+  avaliacao    Int
+  culinaria    String       @db.VarChar(50)
+  dependencias dependencias @relation(fields: [iddep], references: [iddep], onDelete: NoAction, onUpdate: NoAction, map: "fkdep_res_fk")
+}
+
+model robo_de_delivey {
+  idrobo         Int      @id(map: "id_robo_de_delivey_id")
+  data_pedido    DateTime @db.Date
+  produto        String   @db.VarChar(50)
+  quantidade     Int
+  empresa        String   @db.VarChar(50)
+  cnpj           String   @db.Char(14)
+  codigo_reserva Int?
+  unidade        unidade  @relation(fields: [cnpj], references: [cnpj], onDelete: NoAction, onUpdate: NoAction, map: "fku_possui_r_fk")
+  reserva        reserva? @relation(fields: [codigo_reserva], references: [codigo], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([cnpj], map: "fku_possui_r_ind")
+}
+
+model saida {
+  idmov        Int          @id(map: "fkmov_sai_id")
+  idsaida      Int          @unique(map: "sid_saida")
+  favorecido   String       @db.VarChar(100)
+  movimentacao movimentacao @relation(fields: [idmov], references: [idmov], onDelete: NoAction, onUpdate: NoAction, map: "fkmov_sai_fk")
+}
+
+model setor {
+  idsetor    Int       @id(map: "id_setor_id")
+  capacidade Int
+  tipo       String    @db.VarChar(50)
+  unidade    unidade[]
+}
+
+model u_realiza_m {
+  idmov        Int
+  cnpj         String       @db.Char(14)
+  movimentacao movimentacao @relation(fields: [idmov], references: [idmov], onDelete: NoAction, onUpdate: NoAction, map: "fku_r_mov_fk")
+  unidade      unidade      @relation(fields: [cnpj], references: [cnpj], onDelete: NoAction, onUpdate: NoAction, map: "fku_r_uni")
+
+  @@id([cnpj, idmov], map: "id_u_realiza_m")
+  @@index([idmov], map: "fku_r_mov_ind")
+}
+
+model unidade {
+  cnpj            String            @id(map: "id_unidade_id") @db.Char(14)
+  razao_social    String            @db.VarChar(100)
+  nome_fantasia   String            @db.VarChar(100)
+  loc_latitude    String            @db.VarChar(100)
+  loc_longitude   String            @db.VarChar(100)
+  capacidade      Int
+  categoria       String            @db.VarChar(50)
+  idsetor         Int
+  codigo          Int
+  condominio      condominio?
+  dependencias    dependencias[]
+  estacionamento  estacionamento?
+  estoque         estoque[]
+  funcionario     funcionario[]
+  robo_de_delivey robo_de_delivey[]
+  u_realiza_m     u_realiza_m[]
+  hotel           hotel             @relation(fields: [codigo], references: [codigo], onDelete: NoAction, onUpdate: NoAction, map: "fkh_possui_u_fk")
+  setor           setor             @relation(fields: [idsetor], references: [idsetor], onDelete: NoAction, onUpdate: NoAction, map: "fku_possui_s_fk")
+
+  @@index([codigo], map: "fkh_possui_u_ind")
+  @@index([idsetor], map: "fku_possui_s_ind")
+}
+
+model vaga {
+  idvaga         Int            @id(map: "id_vaga")
+  numero         Int
+  eh_coberta     String         @db.Char(1)
+  tipo           String         @db.VarChar(50)
+  codigo         Int
+  codigoest      Int
+  estacionamento estacionamento @relation(fields: [codigoest], references: [codigoest], onDelete: NoAction, onUpdate: NoAction, map: "fke_possui_v_fk")
+  reserva        reserva        @relation(fields: [codigo], references: [codigo], onDelete: NoAction, onUpdate: NoAction, map: "fkreservavaga_fk")
+
+  @@index([codigoest], map: "fke_possui_v_ind")
+  @@index([codigo], map: "fkreservavaga_ind")
+}
