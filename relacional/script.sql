@@ -1,3 +1,4 @@
+/* Caso banco de dados já exista remova o statemant abaixo*/
 CREATE DATABASE "Hotel" WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'Portuguese_Brazil.1252';
 
 ALTER DATABASE "Hotel" OWNER TO postgres;
